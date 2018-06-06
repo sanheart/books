@@ -10,7 +10,7 @@ class Book extends Component {
   }
 
   // 改变书籍所在的书架
-  changeBookOn(shelf) {
+  changeBookOnShelf(shelf) {
     this.props.onMoveBook(this.props.book, shelf)
   }
 
@@ -22,13 +22,12 @@ class Book extends Component {
        <div className="book-top">
          <div className="book-cover" style={{ height: 192, width: 128, backgroundImage: `url(${book.imageLinks !== undefined ? book.imageLinks.thumbnail: ''})` }}></div>
           <div className="book-shelf-changer">
-            {/* 通过选项传输value触发onChange事件，实现相对应的changeBookOn方法 */}
-            <select value={book.shelf} onChange={(event) => this.changeBookOn(event.target.value)}>
+            <select value={book.shelf} onChange={(event) => this.changeBookOnShelf(event.target.value)}>
               <option value="none" disabled>移动到...</option>
               <option value="currentlyReading">最近阅读</option>
               <option value="wantToRead">想读</option>
               <option value="read">已读</option>
-              <option value="none">取消跟踪</option>
+              <option value="none">取消追踪</option>
             </select>
           </div>
        </div>

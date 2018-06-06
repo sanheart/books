@@ -5,7 +5,7 @@ import Book from './Book'
 import PropTypes from 'prop-types'
 import sortBy from 'sort-by'
 
-class SearchBook extends Component {
+class Search extends Component {
   // 类型检查
   static propTypes = {
     booksOnShelf: PropTypes.array,
@@ -13,26 +13,21 @@ class SearchBook extends Component {
   }
 
   state = {
-    searchStr: '',
-    books_array: []
+    query: '',
+    searchedBooks: []
   }
 
-  // 根据录入query查询来更新books的状态
-  updateSearchStr = (searchStr) => {
-    // 输入为空时，状态设置为初始状态；
-    // 输入不为空时，使用BookAPI的search()异步更新状态数据
-    if (!searchStr) {
-      this.setState({ searchStr: '', books_array: [] })
+
+  updateSearchStr = (query) => {
+    if (!query) {
+      this.setState({ query: '', searchedBooks: [] })
     } else {
       // 去除searchStr前后的空格
-      this.setState({ searchStr: searchStr.trim() })
-      BooksAPI.search(searchStr).then((books_array) => {
-        if (books_array.error) {
-          books_array = [];
-        }
-        books_array.map(book => (this.props.booksOnShelf.filter((oneShelfBook) => oneShelfBook.id === book.id)
+      this.setState({ query: query.trim() })
+      BooksAPI.search(query).then((searchedBooks) => {
+        searchedBooks.map(book => (this.props.booksOnShelf.filter((oneShelfBook) => oneShelfBook.id === book.id)
         .map(oneShelfBook => book.shelf = oneShelfBook.shelf)));
-        this.setState({books_array})
+        this.setState({searchedBooks})
       })
     }
   }
@@ -55,12 +50,7 @@ class SearchBook extends Component {
           <ol className="books-grid">
             <div className="bookshelf-books">
               <ol className="books-grid">
-                {/*
-                  * 1、将对应书架上的书籍按标题顺序来排序
-                  * 2、根据是否匹配书架名来进行筛选
-                  * 3、遍历以插入每个key唯一的Book组件
-                  */}
-                {this.state.books_array.sort(sortBy('title'))
+                {this.state.searchedBooks.sort(sortBy('title'))
                   .map(book => (
                     <Book
                       onMoveBook={this.props.onMoveBook}
@@ -78,4 +68,4 @@ class SearchBook extends Component {
   }
 }
 
-export default SearchBook
+export default Search

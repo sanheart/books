@@ -2,53 +2,50 @@ import React from 'react'
 import {Route, Link} from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
-import HeaderPart from './HeaderPart'
-// import Book from './Book'
 import BookShelf from './BookShelf'
-import SearchBook from './SearchBook'
+import Search from './Search'
 
 class BooksApp extends React.Component {
   state = {
     // 书堆数组
-    books_array: []
+    books: []
   }
 
   moveBook = (book, shelf) => {
-    // 若书堆中有书，即书堆不为空时
-    // 由BookAPI的update()中的fetch方式来异步获取更新数据
-    if (this.state.books_array) {
+    if (this.state.books) {
       BooksAPI.update(book,shelf).then(() => {
         book.shelf = shelf;
         this.setState(state => ({
-          books_array: state.books_array.filter(oneBook => oneBook.id !== book.id).concat([ book ])
+          books: state.books.filter(oneBook => oneBook.id !== book.id).concat([ book ])
         }))
       })
     }
   }
 
-  // 执行componentDidMount()钩子时异步获取数据
+  // 执行componentDidMount()获取数据
   componentDidMount() {
-    BooksAPI.getAll().then((books_array) => {
-      this.setState({ books_array })
+    BooksAPI.getAll().then((books) => {
+      this.setState({ books })
     })
   }
 
   render() {
     return (
       <div className="app">
-        {/* 搜索页Route */}
-        <Route path="/search" render={() => (
+        {/* 搜索页 */}
+        <Route exact path="/search" render={() => (
           // 仅显示搜索组件
-          <SearchBook onMoveBook={this.moveBook} booksOnShelf={this.state.books_array}/>
+          <Search onMoveBook={this.moveBook} booksOnShelf={this.state.books}/>
         )} />
-        {/* 应用首页Route */}
+        {/* 应用首页 */}
         <Route exact path="/" render={() => (
           <div className="list-books">
-            {/* 顶部栏组件 */}
-            <HeaderPart/>
+            <div className="list-books-title">
+              <h1>MyReads</h1>
+            </div>
             <div className="list-books-content">
               {/* 图书架分类（三类），其中含单个图书的组件 */}
-              <BookShelf onMoveBook={this.moveBook} booksOnShelf={this.state.books_array}/>
+              <BookShelf onMoveBook={this.moveBook} booksOnShelf={this.state.books}/>
             </div>
             {/* 搜索按钮 */}
             <div className="open-search">
