@@ -25,6 +25,9 @@ class Search extends Component {
       // 去除searchStr前后的空格
       this.setState({ query: query.trim() })
       BooksAPI.search(query).then((searchedBooks) => {
+        if(searchedBooks.error){
+          searchedBooks = []
+        }
         searchedBooks.map(book => (this.props.booksOnShelf.filter((oneShelfBook) => oneShelfBook.id === book.id)
         .map(oneShelfBook => book.shelf = oneShelfBook.shelf)));
         this.setState({searchedBooks})
