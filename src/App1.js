@@ -23,8 +23,32 @@ class App1 extends Component {
       //console.log(books.map((book) => book.shelf))
       //console.log(books.filter((book) => (book.shelf === 'currentlyReading')))
       //console.log(books.map((book) => book.authors))
-    })
+    }).catch(e => console.log(e))
   }
+
+  //移动书
+  moveBook = (book, shelf) => {
+      if(this.state.books) {
+        // console.log(BooksAPI.update(book, shelf))
+        // console.log(book)
+        // //传入的是要转移的书架
+        // console.log(shelf)
+        console.log(this.state.books)
+        BooksAPI.update(book, shelf).then(() => {
+          book.shelf = shelf
+          this.setState(state => (
+            {
+              books: state.books
+                .filter(oneBook => oneBook.id !== book.id)
+                .concat([book])
+            }
+          ))
+          console.log(this.state.books)
+          //this.setState({books: this.state.books})
+        })
+      }
+  }
+
   render() {
     return(
       <div className='app'>
@@ -37,6 +61,7 @@ class App1 extends Component {
             </div>
             {/*书架组件*/}
             <BookShelf1
+              onMoveBook = {this.moveBook}
               books = {this.state.books}
             />
             {/*主页跳转到搜索页面*/}
@@ -45,9 +70,16 @@ class App1 extends Component {
             </div>
           </div>
         )}/>
-        {/*搜索页面*/}
-        <Route path='/search' render={() => (
-          <Search1 />
+        {/*搜索页面
+          1. 移动完书后，返回书架页面*/}
+        <Route path='/search' render={({ history }) => (
+          <Search1
+            onMoveBook = {(book, shelf) => {
+              this.moveBook(book, shelf)
+              history.push('/')
+            }}
+            books = {this.state.books}
+          />
         )}/>
       </div>
     )

@@ -1,9 +1,13 @@
 
 import React, { Component } from 'react'
 import Book1 from './Book1'
+import PropTypes from 'prop-types'
 
 class BookShelf1 extends Component {
-
+//类型检查
+static propTypes = {
+  books: PropTypes.array.isRequired
+}
   render() {
 
   	const bookshelf_title = ['currentlyReading', 'wantToRead', 'read']
@@ -23,11 +27,12 @@ class BookShelf1 extends Component {
                     {this.props.books.filter((book) => book.shelf === bookshelf).map(
                       (book) => (
                         <li key={book.id}>
-                          {/*插入Book组件，显示书*/}
+                          {/*插入Book组件，显示书
                           {console.log(book.authors)}
                           {console.log(book.title)}
+                          */}
                           <Book1
-                            key = {book.id}
+                            onMoveBook = {this.props.onMoveBook}
                             book = {book}
                           />
                         </li>

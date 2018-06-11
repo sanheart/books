@@ -2,13 +2,10 @@ import React, { Component } from 'react'
 import {Link} from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 import Book1 from './Book1'
-import PropTypes from 'prop-types'
+import {DebounceInput} from 'react-debounce-input'
 
 class Search1 extends Component {
-  //类型检查
-  static propTypes = {
-     books: PropTypes.array
-   }
+
   //需引入状态来跟踪输入字段query的变化,与搜索道的书
   state = {
     query: '',
@@ -21,9 +18,9 @@ class Search1 extends Component {
       this.setState({ query: '', searchedBooks: [] })
     } else {
       this.setState({ query: query.trim() })
-      //从API search方法获取搜索到的书没有self，需要利用书架信息同步
+      //从API search方法获取搜索到的书没有self
       BooksAPI.search(query).then((searchedBooks) => {
-        if(searchedBooks.error){
+        if(searchedBooks.error) {
           searchedBooks = []
         }
         searchedBooks.map(book => (
@@ -34,10 +31,10 @@ class Search1 extends Component {
         ));
 
         this.setState({searchedBooks})
-        console.log(searchedBooks)
       })
     }
   }
+
 
   render() {
 
@@ -48,10 +45,11 @@ class Search1 extends Component {
           <Link to='/' className='close-search'>Close</Link>
           {/*搜索框*/}
           <div className='search-books-input-wrapper'>
-            <input
-            type='text'
-            placeholder='Search by titile or authot'
-            value={this.state.query}
+            {/*防抖动*/}
+            <DebounceInput
+            autoFocus
+            placeholder = 'Search by titile or authors'
+            debounceTimeout = {300}
             onChange={(event) => this.updateQuery(event.target.value)}
             />
           </div>
@@ -64,7 +62,7 @@ class Search1 extends Component {
                 <li key={book.id}>
                   {/*插入Book组件，显示书*/}
                   <Book1
-                    key = {book.id}
+                    onMoveBook = {this.props.onMoveBook}
                     book = {book}
                     />
                 </li>
